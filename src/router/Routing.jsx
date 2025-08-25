@@ -11,6 +11,7 @@ import { CustomerForm } from '../components/customer/Form';
 import { UiProvider } from '../context/ui/UiProvider';
 import { InvoiceList } from '../components/invoice/List';
 import { InvoiceForm } from '../components/invoice/Form';
+import { HistoricList } from '../components/historic/List';
 
 export const Routing = () => {
   return (
@@ -38,6 +39,7 @@ export const Routing = () => {
               <Route path='invoice' index element={<InvoiceList />} />
               <Route path='invoice/new' index element={<InvoiceForm />} />
               <Route path='invoice/edit/:id' index element={<InvoiceForm />} />
+              <Route path='historic' index element={<HistoricList />} />
             </Route>
 
             <Route

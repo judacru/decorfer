@@ -21,6 +21,28 @@ export const getInvoices = async () => {
   }
 };
 
+export const getHistoric = async (form) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(Global.url + 'invoices/historic', {
+      method: 'POST',
+      body: JSON.stringify(form),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    if (response.body) {
+      const data = await response.json();
+      return data.body;
+    }
+  } catch (error) {
+    console.error('Error fetching invoices:', error);
+    throw error;
+  }
+};
+
 export const getInvoiceById = async (id) => {
   try {
     const token = localStorage.getItem('token');

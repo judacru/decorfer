@@ -23,13 +23,14 @@ a:hover {
 }
 
 .layout__content {
-  grid-area: content;
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  width: 200vh;
-  padding: 0 1.5rem;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
 .list__content {
@@ -38,10 +39,9 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  display: block;
 }
 
 h1 {

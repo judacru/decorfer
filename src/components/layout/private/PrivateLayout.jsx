@@ -2,7 +2,7 @@ import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Header from './Header';
 import useAuth from '../../../hooks/useAuth';
-import { CircularProgress } from '@mui/material';
+import { CircularProgress, Toolbar } from '@mui/material';
 
 export const PrivateLayout = () => {
   const { auth, loading } = useAuth();
@@ -24,7 +24,6 @@ export const PrivateLayout = () => {
     return (
       <>
         <Header />
-
         <section className='layout__content'>
           {auth.id ? <Outlet /> : <Navigate to='/login' />}
         </section>

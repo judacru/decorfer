@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import {
+  Alert,
   Box,
   Button,
+  Collapse,
   Container,
   FormControl,
   Grid2,
@@ -28,6 +30,9 @@ export const CustomerForm = ({ customer }) => {
   const { id } = useParams();
   const isEditMode = Boolean(id);
   const [list, setList] = useState([]);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success');
+  const [showAlert, setShowAlert] = useState(false);
 
   const {
     register,
@@ -62,27 +67,45 @@ export const CustomerForm = ({ customer }) => {
   }, [id, isEditMode, reset]);
 
   const onSubmit = async (form) => {
-    setIsSaving(true);
+  setIsSaving(true);
+  setShowAlert(false); // Oculta alertas anteriores
 
-    try {
-      form = {
-        ...form,
-        products: list
-      };
-
-      const response = isEditMode
-        ? await editCustomer(form, id)
-        : await saveCustomer(form);
-
+  try {
+    if (list.length < 1) {
+      setAlertMessage('Debe agregar al menos un producto');
+      setAlertSeverity('error');
+      setShowAlert(true);
       setIsSaving(false);
-      if (response.body || response.message) {
-        navigate('/admin/customer');
-      }
-    } catch (error) {
-      console.error(error);
-      setIsSaving(false);
+      return;
     }
-  };
+
+    form = {
+      ...form,
+      products: list
+    };
+
+    const response = isEditMode
+      ? await editCustomer(form, id)
+      : await saveCustomer(form);
+
+    setIsSaving(false);
+
+    if (response.body || response.message) {
+      setAlertMessage('Cliente guardado exitosamente');
+      setAlertSeverity('success');
+      setShowAlert(true);
+
+      setTimeout(() => navigate('/admin/customer'), 1500);
+    }
+  } catch (error) {
+    console.error(error);
+    setIsSaving(false);
+
+    setAlertMessage(error.message || 'Error al guardar el cliente');
+    setAlertSeverity('error');
+    setShowAlert(true);
+  }
+};
 
   return (
     <Container maxWidth='md' sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -90,6 +113,15 @@ export const CustomerForm = ({ customer }) => {
         <Typography variant='h2' component='h1' sx={{ mb: 2 }}>
           {isEditMode ? 'Editar Cliente' : 'Nuevo Cliente'}
         </Typography>
+        <Collapse in={showAlert}>
+          <Alert
+            severity={alertSeverity}
+            onClose={() => setShowAlert(false)}
+            sx={{ mb: 2 }}
+          >
+            {alertMessage}
+          </Alert>
+        </Collapse>
 
         {isLoading ? (
           <Typography>Cargando datos del cliente...</Typography>

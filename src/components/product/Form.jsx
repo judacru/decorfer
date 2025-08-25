@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Alert, Collapse } from '@mui/material';
 import {
   Box,
   Button,
@@ -20,6 +21,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 export const ProductForm = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success');
+  const [showAlert, setShowAlert] = useState(false);
   const { id } = useParams();
   const isEditMode = Boolean(id);
 
@@ -50,31 +54,50 @@ export const ProductForm = () => {
     }
   }, [id, isEditMode, reset]);
 
-  const onSubmit = async (form) => {
-    setIsSaving(true);
+ const onSubmit = async (form) => {
+  setIsSaving(true);
+  setShowAlert(false); // Oculta alerta previa
 
-    try {
-      const response = isEditMode
-        ? await editProduct(form, id)
-        : await saveProduct(form);
+  try {
+    const response = isEditMode
+      ? await editProduct(form, id)
+      : await saveProduct(form);
 
-      setIsSaving(false);
-      if (response.body || response.message) {
-        navigate('/admin/product');
-      }
-    } catch (error) {
-      console.error(error);
-      setIsSaving(false);
+    setIsSaving(false);
+
+    if (response.body || response.message) {
+      setAlertMessage('Producto guardado exitosamente');
+      setAlertSeverity('success');
+      setShowAlert(true);
+
+      setTimeout(() => navigate('/admin/product'), 1500);
     }
-  };
+  } catch (error) {
+    console.error(error);
+    setIsSaving(false);
+
+    setAlertMessage(error.message || 'Error inesperado al guardar el producto');
+    setAlertSeverity('error');
+    setShowAlert(true);
+  }
+};
 
   return (
     <Container maxWidth='md' sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
+      <Paper elevation={3} sx={{ p: 4, mt: 18 }}>
         <Typography variant='h2' component='h1' sx={{ mb: 2 }}>
           {isEditMode ? 'Editar Producto' : 'Nuevo Producto'}
         </Typography>
 
+        <Collapse in={showAlert}>
+          <Alert
+            severity={alertSeverity}
+            onClose={() => setShowAlert(false)}
+            sx={{ mb: 2 }}
+          >
+            {alertMessage}
+          </Alert>
+        </Collapse>
         {isLoading ? (
           <Typography>Cargando datos del producto...</Typography>
         ) : (

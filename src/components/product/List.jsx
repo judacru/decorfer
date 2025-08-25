@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Checkbox, Grid2, Typography } from '@mui/material';
+import { Box, Button, Checkbox, Container, Grid2, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { AddOutlined } from '@mui/icons-material';
 import { getProducts, inactivateProduct } from '../../services/productService';
@@ -137,36 +137,38 @@ export const ProductList = () => {
   }));
 
   return (
-    <>
-      <section className='list__content'>
-        <Box display='flex' justifyContent='start' sx={{ mt: 8 }}>
-          <Typography variant='h3' component='h3' mb={1}>
-            Mis Productos
-          </Typography>
+  <Container maxWidth="xl" sx={{ mt: 5 }}>
+    <Box display="flex" justifyContent="start" sx={{ mt: 8 }}>
+      <Typography variant="h3" component="h3" mb={1}>
+        Mis Productos
+      </Typography>
+    </Box>
+
+    <Box display="flex" justifyContent="end" sx={{ mb: 3 }}>
+      <Button
+        aria-label="Create a new product"
+        startIcon={<AddOutlined />}
+        color="secondary"
+        href="/admin/product/new"
+        sx={{
+          textTransform: 'uppercase',
+          '&:hover': {
+            border: '1px solid #3A64D8',
+            color: '#3A64D8'
+          }
+        }}
+      >
+        Crear producto
+      </Button>
+    </Box>
+
+    <Grid2 container className="fadeIn">
+      <Grid2 sx={{ width: '100%', overflowX: 'auto' }}>
+        <Box sx={{ minWidth: '1000px' }}>
+          <DataGrid rows={rows} columns={columns} pageSize={6} autoHeight />
         </Box>
-        <Box display='flex' justifyContent='end' sx={{ mb: 3 }}>
-          <Button
-            aria-label='Create a new product'
-            startIcon={<AddOutlined />}
-            color='secondary'
-            href='/admin/product/new'
-            sx={{
-              textTransform: 'uppercase',
-              '&:hover': {
-                border: '1px solid #3A64D8',
-                color: '#3A64D8'
-              }
-            }}
-          >
-            Crear producto
-          </Button>
-        </Box>
-        <Grid2 container className='fadeIn'>
-          <Grid2 sx={{ height: '530px', width: '100%' }}>
-            <DataGrid rows={rows} columns={columns} pageSize={6} />
-          </Grid2>
-        </Grid2>
-      </section>
-    </>
-  );
+      </Grid2>
+    </Grid2>
+  </Container>
+);
 };

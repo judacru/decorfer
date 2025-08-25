@@ -55,11 +55,12 @@ export const saveProduct = async (form) => {
       }
     });
 
+    const data = await request.json();
+
     if (!request.ok) {
-      throw new Error('Error al crear el producto');
+      throw new Error(data.message || 'Error al guardar el producto');
     }
 
-    const data = await request.json();
     return data;
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -79,11 +80,11 @@ export const editProduct = async (form, id) => {
       }
     });
 
-    if (!request.ok) {
-      throw new Error('Error al editar el producto');
-    }
-
     const data = await request.json();
+
+    if (!request.ok) {
+      throw new Error(data.message || 'Error al editar el producto');
+    }
     return data;
   } catch (error) {
     console.error('Error updating products:', error);

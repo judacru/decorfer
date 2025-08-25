@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Grid2, Typography } from '@mui/material';
+import { Box, Button, Container, Grid2, Typography } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import { AddOutlined, Print } from '@mui/icons-material';
 import { getInvoices, reprint } from '../../services/invoiceService';
@@ -114,7 +114,7 @@ export const InvoiceList = () => {
 
   return (
     <>
-      <section className='list__content'>
+      <Container maxWidth="xl" sx={{ mt: 5 }}>
         <Box display='flex' justifyContent='start' sx={{ mt: 8 }}>
           <Typography variant='h3' component='h3' mb={1}>
             Mis Facturas
@@ -138,11 +138,18 @@ export const InvoiceList = () => {
           </Button>
         </Box>
         <Grid2 container className='fadeIn'>
-          <Grid2 sx={{ height: '530px', width: '100%' }}>
-            <DataGrid rows={rows} columns={columns} pageSize={6} />
+          <Grid2 sx={{ width: '100%', overflowX: 'auto' }}>
+            <Box sx={{ minWidth: '1000px' }}>
+              <DataGrid
+                rows={rows}
+                columns={columns}
+                pageSize={6}
+                autoHeight
+              />
+            </Box>
           </Grid2>
         </Grid2>
-      </section>
+      </Container>
     </>
   );
 };

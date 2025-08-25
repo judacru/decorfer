@@ -18,8 +18,10 @@ import {
 
 import {
   CategoryOutlined,
+  ChangeHistory,
   ConfirmationNumberOutlined,
   Hail,
+  ListAltOutlined,
   LoginOutlined,
   SearchOutlined,
   VpnKeyOutlined
@@ -94,6 +96,11 @@ const SideMenu = () => {
                   label: 'Productos',
                   icon: <CategoryOutlined />,
                   path: '/admin/product'
+                },
+                {
+                  label: 'Histórico facturas',
+                  icon: <ListAltOutlined />,
+                  path: '/admin/historic'
                 }
                 /* { label: "Users", icon: <AdminPanelSettings />, path: "/admin/users" }, */
               ].map((adminItem) => (

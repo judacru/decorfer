@@ -54,11 +54,12 @@ export const saveCustomer = async (form) => {
       }
     });
 
+    const data = await request.json();
+
     if (!request.ok) {
-      throw new Error('Error al crear el cliente');
+      throw new Error(data.message || 'Error al guardar el cliente');
     }
 
-    const data = await request.json();
     return data;
   } catch (error) {
     console.error('Error creating customer:', error);
@@ -78,11 +79,12 @@ export const editCustomer = async (form, id) => {
       }
     });
 
+    const data = await request.json();
+    
     if (!request.ok) {
-      throw new Error('Error al editar el cliente');
+      throw new Error(data.message || 'Error al editar el cliente');
     }
 
-    const data = await request.json();
     return data;
   } catch (error) {
     console.error('Error updating customers:', error);

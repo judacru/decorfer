@@ -11,7 +11,9 @@ import {
   Paper,
   Typography,
   Container,
-  CircularProgress
+  CircularProgress,
+  Collapse,
+  Alert
 } from '@mui/material';
 import { SaveOutlined } from '@mui/icons-material';
 import { useForm } from 'react-hook-form';
@@ -35,6 +37,9 @@ export const InvoiceForm = () => {
   const { id } = useParams();
   const isEditMode = Boolean(id);
   const { handleSubmit, reset } = useForm();
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success');
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
     fetchCustomers();
@@ -89,43 +94,77 @@ export const InvoiceForm = () => {
   };
 
   const onSubmit = async (form) => {
-    if (list.length < 1 || !customer) return;
-    setIsSaving(true);
-    try {
-      form = {
-        ...form,
-        consecutive: consecutive,
-        customer: customer.id,
-        details: list.map((row) => {
-          const isNew = !row.id || row.id.toString().length > 10;
+  setShowAlert(false);
 
-          return {
-            ...row,
-            product: row.product.id,
-            id: isNew ? undefined : row.id
-          };
-        })
-      };
+  if (list.length < 1) {
+    setAlertMessage('Debe agregar al menos un producto a la lista');
+    setAlertSeverity('error');
+    setShowAlert(true);
+    return;
+  }
 
-      const response = isEditMode
-        ? await editInvoice(form, id)
-        : await saveInvoice(form);
-      setIsSaving(false);
-      if (response && response.success) {
-        navigate('/admin/invoice');
-      }
-    } catch (error) {
-      console.error(error);
-      setIsSaving(false);
+  if (!customer) {
+    setAlertMessage('Debe seleccionar un cliente');
+    setAlertSeverity('error');
+    setShowAlert(true);
+    return;
+  }
+
+  setIsSaving(true);
+
+  try {
+    form = {
+      ...form,
+      consecutive: consecutive,
+      customer: customer.id,
+      details: list.map((row) => {
+        const isNew = !row.id || row.id.toString().length > 10;
+
+        return {
+          ...row,
+          product: row.product.id,
+          id: isNew ? undefined : row.id
+        };
+      })
+    };
+
+    const response = isEditMode
+      ? await editInvoice(form, id)
+      : await saveInvoice(form);
+
+    setIsSaving(false);
+
+    if (response && response.success) {
+      setAlertMessage('Factura guardada exitosamente');
+      setAlertSeverity('success');
+      setShowAlert(true);
+
+      setTimeout(() => navigate('/admin/invoice'), 1500);
     }
-  };
+  } catch (error) {
+    console.error(error);
+    setIsSaving(false);
 
+    setAlertMessage(error.message || 'Error al guardar la factura');
+    setAlertSeverity('error');
+    setShowAlert(true);
+  }
+};
   return (
     <Container maxWidth='md' sx={{ display: 'flex', justifyContent: 'center' }}>
       <Paper elevation={3} sx={{ p: 4, mt: 4 }}>
         <Typography variant='h2' component='h1' sx={{ mb: 2 }}>
           {isEditMode ? 'Editar Factura' : 'Nueva Factura'}
         </Typography>
+          <Collapse in={showAlert}>
+                  <Alert
+                    severity={alertSeverity}
+                    onClose={() => setShowAlert(false)}
+                    sx={{ mb: 2 }}
+                  >
+                    {alertMessage}
+                  </Alert>
+                </Collapse>
         {isLoading ? (
           <Typography>Cargando datos de la factura...</Typography>
         ) : (
@@ -155,8 +194,8 @@ export const InvoiceForm = () => {
                     endAdornment: isLoading && <CircularProgress size={20} />
                   }}
                   sx={{ width: '350px' }}
-                  /* error={!!error}
-       helperText={error} */
+                /* error={!!error}
+     helperText={error} */
                 />
               </Grid2>
 
